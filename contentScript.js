@@ -20,13 +20,16 @@ function insertStylesheet () {
       background-color: blue !important;
   }
   .aria {
-      background-color: yellow !important;
+      background-color: purple !important;
   }
   .caesars {
       background-color: grey !important;
   }
   .wynn {
-      background-color: darkcyan !important;
+      background-color: darkred !important;
+  }
+  .mandalay {
+      background-color: #B8860B !important;
   }
 
   #aws-tweaker-panel {
@@ -59,16 +62,6 @@ function removeTools () {
   }
 }
 
-
-
-
-function refreshColoring () {
-  console.log('refreshColoring');
-  addSessionVenues()
-}
-
-
-
 function addSessionVenues () {
   const elts = document.getElementsByClassName('rbc-time-content');
   if (!elts || elts.length === 0) {
@@ -82,16 +75,15 @@ function addSessionVenues () {
       element.tagName === 'DIV' &&
       element.classList.contains('rbc-event') &&
       element.classList.contains('schedule-calendar-session') &&
-      element.classList.contains('session-interest')
+      element.classList.contains('session-interest') &&
+      !element.classList.contains('reinvent-fixer') // so we don't do this twice as we click around
     ) {
-      // Add the 'mgm' class if all conditions are met
-
       let titleAndTime = element.title;
       const titleParts = titleAndTime.match(/(?:\d{1,2}:\d{2} [AP]M(?: - \d{1,2}:\d{2} [AP]M)? \w*?: )(.*)/);
 
       if (titleParts && titleParts[1]) {
         const title  = titleParts[1].trim();
-        let item = sessionInterests.find((session) => session.title === title);
+        let item = sessionInterests.find((session) => session.title.trim() === title);
         if (item?.times && item?.times[0]) {
           let room = item.times[0].room;
           let venueParts = room.split(' ');
@@ -99,6 +91,20 @@ function addSessionVenues () {
           console.log(title);
           console.log(venue);
           element.classList.add(venue.toString().toLowerCase());
+          element.classList.add('reinvent-fixer');
+
+          // Attach the venue name
+          let contentDiv = element.querySelector('.rbc-event-content');
+          if (contentDiv) {
+            let venueParagraph = document.createElement('p');
+            venueParagraph.textContent = venue;
+
+            // Append the new p element inside the contentDiv
+            contentDiv.appendChild(venueParagraph);
+          } else {
+            console.warn('rbc-event-content div not found for', title);
+          }
+
         } else {
           console.warn('No venue found for', title);
         }
@@ -127,23 +133,45 @@ function hookShowFavoritesCheckbox() {
     const label = labels[i];
 
     if (label.textContent.trim() === 'Show Favorites') {
-      // Get the checkbox input associated with this label
       const checkbox = label.querySelector('input[type="checkbox"]');
 
       if (checkbox) {
-        // Hook into the click event for the checkbox
         checkbox.addEventListener('click', function () {
-          // Run the refreshColoring function when the checkbox is clicked
           setTimeout(() => {
-            refreshColoring();
-          }, 1000); // delay so the page has time to update
+            addSessionVenues();
+          }, 500); // delay so the page has time to update
         });
       }
 
-      // Exit the loop after finding the "Show Favorites" label
       break;
     }
   }
+
+  // Hook into buttons with the title "List View Daily" or "Grid View Weekly"
+  const buttons = document.querySelectorAll('button');
+
+  buttons.forEach((button) => {
+    const span = button.querySelector('span[title]');
+    if (span && (span.title === 'List View Daily' || span.title === 'Grid View Weekly')) {
+      button.addEventListener('click', function () {
+        // Run the addSessionVenues function when the button is clicked
+        setTimeout(() => {
+          addSessionVenues();
+        }, 500); // delay so the page has time to update
+      });
+    }
+  });
+
+  // Use event delegation to handle dynamically added buttons with classes "next-day cursor-pointer" or "prev-day cursor-pointer"
+  document.addEventListener('click', function (event) {
+    const target = event.target.closest('.next-day.cursor-pointer, .prev-day.cursor-pointer');
+    if (target) {
+      // Run the addSessionVenues function when the button is clicked
+      setTimeout(() => {
+        addSessionVenues();
+      }, 500); // delay so the page has time to update
+    }
+  });
 }
 
 
@@ -159,14 +187,13 @@ function hookShowFavoritesCheckbox() {
 
     if (args[0] && args[0].includes) {
       if (args[0].includes('/api/myData') && args[1]?.method.toLowerCase() === 'post') {
-        const clone = response.clone(); // Clone the response to avoid consuming the body
+        const clone = response.clone();
         clone.json().then(data => {
           if (data?.sessionInterests) {
             console.log('Captured response data:', data.sessionInterests);
             sessionInterests = data.sessionInterests;
-            refreshColoring()
+            addSessionVenues()
           }
-          // Do something with the captured data
         });
       }
     }
@@ -185,7 +212,7 @@ setTimeout(() => {
     hookShowFavoritesCheckbox()
     insertTools()
     insertStylesheet()
-    refreshColoring()
+    addSessionVenues()
   } else {
     removeTools()
   }
