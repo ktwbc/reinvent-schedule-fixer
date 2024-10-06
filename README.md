@@ -3,7 +3,7 @@ Re:Invent Schedule Fixer
 
 This is a Google Chrome extension. You can install this extension by this address: [Chrome Web Store](https://chrome.google.com/webstore/detail/reinvent-schedule-fixer/uploadpendinghash).
 
-The purpose of this extension is to add additional display features to the AWS Re:Invent MyAgenda Scheduler page to make planning your schedule easier.
+The purpose of this extension is to add additional display features to the AWS Re:Invent MyAgenda Scheduler page to make planning your schedule easier. The default view doesn't distinguish in any way the venues without having to click on each item, and when you're planning your schedule, you need to quickly see if you have sessions all over the place which is impractical. This should help.
 
 This extension doesn't collect any user and web page information. It only runs on AWS My Agenda web page. It is free to use.
 
