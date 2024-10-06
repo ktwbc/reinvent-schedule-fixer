@@ -7,7 +7,7 @@ The purpose of this extension is to add additional display features to the AWS R
 
 This extension doesn't collect any user and web page information. It only runs on AWS My Agenda web page. It is free to use.
 
-Overhead is very low, colorize operation takes ~7 milliseconds, listen operation for new event logs takes just ~0.5 milliseconds in every second.
+The list of sessions is using browser memory (AWS did this not me) so some browser memory is used during searching. There is a purposeful 3 second delay before modifying the page to allow everything to load.
 
 ### Contributions
 Contributions are welcome. Please open an issue or a pull request but this was a quick hobby project so I may not be able to respond quickly. Feel free to buy me a coffee https://buymeacoffee.com/kristhomwh8
