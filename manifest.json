@@ -1,0 +1,36 @@
+{
+  "name": "Re:Invent Schedule Fixer",
+  "description": "Helpful modifications to the AWS Re:Invent schedule page",
+  "version": "1.0",
+  "homepage_url": "https://github.com/ktwbc/reinvent-schedule-fixer",
+  "manifest_version": 3,
+  "icons": {
+    "16": "img/logo_16.png",
+    "32": "img/logo_32.png",
+    "64": "img/logo_64.png",
+    "128": "img/logo_128.png"
+  },
+  "action": {
+    "default_popup": "hello.html",
+    "default_icon": {
+      "16": "img/logo_16.png"
+    }
+  },
+  "host_permissions": [
+    "https://catalog.awsevents.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://catalog.awsevents.com/*","https://registration.awsevents.com/flow/awsevents/*/myagenda/page/myagenda"],
+      "js": ["contentScript.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    }
+  ],
+  "permissions": [
+    "scripting",
+    "webRequest",
+    "cookies",
+    "storage"
+  ]
+}
