@@ -1,4 +1,4 @@
-Re:Invent Schedule Fixer
+Re:Invent Schedule Fixer - Color Coding and Venue labels
 ========================
 
 This is a Google Chrome extension. 
