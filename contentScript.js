@@ -10,7 +10,6 @@
 let sessionInterests = [];
 
 function insertStylesheet () {
-  console.log('Adding styles')
   const style = document.createElement('style')
   style.textContent = `
   .mgm {
@@ -88,8 +87,6 @@ function addSessionVenues () {
           let room = item.times[0].room;
           let venueParts = room.split(' ');
           let venue = venueParts[0];
-          console.log(title);
-          console.log(venue);
           element.classList.add(venue.toString().toLowerCase());
           element.classList.add('reinvent-fixer');
 
@@ -177,9 +174,7 @@ function hookShowFavoritesCheckbox() {
 
 
 (function() {
-  console.log('** Injecting API fetch hook');
   const originalFetch = window.fetch;
-  console.log(originalFetch);
 
   // Override the native fetch function
   window.fetch = async function(...args) {
@@ -190,7 +185,6 @@ function hookShowFavoritesCheckbox() {
         const clone = response.clone();
         clone.json().then(data => {
           if (data?.sessionInterests) {
-            console.log('Captured response data:', data.sessionInterests);
             sessionInterests = data.sessionInterests;
             addSessionVenues()
           }

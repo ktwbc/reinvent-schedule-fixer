@@ -16,9 +16,6 @@
       "16": "img/logo_16.png"
     }
   },
-  "host_permissions": [
-    "https://catalog.awsevents.com/*"
-  ],
   "content_scripts": [
     {
       "matches": ["https://catalog.awsevents.com/*","https://registration.awsevents.com/flow/awsevents/*/myagenda/page/myagenda"],
@@ -28,9 +25,6 @@
     }
   ],
   "permissions": [
-    "scripting",
-    "webRequest",
-    "cookies",
-    "storage"
+    "scripting"
   ]
 }
