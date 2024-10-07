@@ -9,7 +9,7 @@ The purpose of this extension is to add additional display features to the AWS R
 
 ![Grouping AWS Lambda log](assets/example1.png)
 
-This extension doesn't collect any user and web page information. It only runs on AWS My Agenda web page. It is free to use.
+This extension doesn't collect any user information. The schedule data is captured from an API locally, not saved anywhere. It only runs on AWS My Agenda web page. It is free to use.
 
 The list of sessions is using browser memory (AWS did this not me) so some browser memory is used during searching. There is a purposeful 3 second delay before modifying the page to allow everything to load.
 
