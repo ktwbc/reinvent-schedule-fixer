@@ -33,3 +33,6 @@ Since this is also done before registration, I'm sure I'll have to make some twe
 ### Screenshots:
 ![Grouping AWS Lambda log](assets/example2.png)
 ![Grouping AWS Lambda log](assets/example1.png)
+
+
+Not affiliated with Amazon or AWS (other than the fact I'm going to Re:Invent, see you there!)
