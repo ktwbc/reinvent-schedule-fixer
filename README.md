@@ -7,7 +7,9 @@ This is a Google Chrome extension.
 
 The purpose of this extension is to add additional display features to the AWS Re:Invent MyAgenda Scheduler page to make planning your schedule easier. The default view doesn't distinguish in any way the venues without having to click on each item, and when you're planning your schedule, you need to quickly see if you have sessions all over the place which is impractical. This should help.
 
-![Grouping AWS Lambda log](assets/example1.png)
+Not affiliated with Amazon or AWS (other than the fact I'm going to Re:Invent, see you there!)
+
+![Color Coding Agenda](assets/example1.png)
 
 This extension doesn't collect any user information. The schedule data is captured from an API locally, not saved anywhere. It only runs on AWS My Agenda web page. It is free to use.
 
@@ -31,8 +33,8 @@ Since this is also done before registration, I'm sure I'll have to make some twe
 - [@ktwbc](https://github.com/ktwbc)
 
 ### Screenshots:
-![Grouping AWS Lambda log](assets/example2.png)
-![Grouping AWS Lambda log](assets/example1.png)
+![Color Coding Agenda1](assets/example2.png)
+![Color Coding Agenda2](assets/example1.png)
 
 
-Not affiliated with Amazon or AWS (other than the fact I'm going to Re:Invent, see you there!)
+
