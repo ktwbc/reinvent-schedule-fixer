@@ -74,7 +74,6 @@ function addSessionVenues () {
       element.tagName === 'DIV' &&
       element.classList.contains('rbc-event') &&
       element.classList.contains('schedule-calendar-session') &&
-      element.classList.contains('session-interest') &&
       !element.classList.contains('reinvent-fixer') // so we don't do this twice as we click around
     ) {
       let titleAndTime = element.title;
