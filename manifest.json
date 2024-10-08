@@ -18,7 +18,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://catalog.awsevents.com/*","https://registration.awsevents.com/flow/awsevents/*/myagenda/page/myagenda"],
+      "matches": ["https://catalog.awsevents.com/*","https://registration.awsevents.com/flow/awsevents/*/myagenda/page/myagenda*"],
       "js": ["contentScript.js"],
       "run_at": "document_start",
       "world": "MAIN"
