@@ -1,7 +1,7 @@
 {
   "name": "Re:Invent Schedule Fixer",
   "description": "Helpful modifications to the AWS Re:Invent schedule page",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "homepage_url": "https://github.com/ktwbc/reinvent-schedule-fixer",
   "manifest_version": 3,
   "icons": {
@@ -23,8 +23,5 @@
       "run_at": "document_start",
       "world": "MAIN"
     }
-  ],
-  "permissions": [
-    "scripting"
   ]
 }

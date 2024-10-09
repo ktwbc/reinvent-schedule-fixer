@@ -8,26 +8,30 @@
 'use strict'
 
 let sessionInterests = [];
+let mySchedule = [];
+let debug = false;
 
-function insertStylesheet () {
+function insertStylesheet() {
+  if (debug) console.log('insertStylesheet()');
+
   const style = document.createElement('style')
   style.textContent = `
-  .mgm {
+  .venue-mgm {
       background-color: green !important;
   }
-  .venetian {
+  .venue-venetian {
       background-color: blue !important;
   }
-  .aria {
+  .venue-aria {
       background-color: purple !important;
   }
-  .caesars {
+  .venue-caesars {
       background-color: grey !important;
   }
-  .wynn {
+  .venue-wynn {
       background-color: darkred !important;
   }
-  .mandalay {
+  .venue-mandalay {
       background-color: #B8860B !important;
   }
 
@@ -46,7 +50,9 @@ function insertStylesheet () {
   document.head.appendChild(style)
 }
 
-function insertTools () {
+function insertTools() {
+  if (debug) console.log('insertTools()');
+
   const panel = document.createElement('div')
   let panelHtml = `<div id="aws-tweaker-panel">`
   panel.innerHTML = panelHtml + '</div>'
@@ -54,45 +60,88 @@ function insertTools () {
 
 }
 
-function removeTools () {
+function removeTools() {
+  if (debug) console.log('removeTools()');
+
   const element = document.getElementById('aws-tweaker-panel')
   if (element) {
     element.parentNode.removeChild(element)
   }
 }
 
-function addSessionVenues () {
-  const elts = document.getElementsByClassName('rbc-time-content');
+function addSessionVenues() {
+  if (debug) console.log('addSessionVenues()');
+  const elts = document.getElementsByClassName('rbc-events-container');
   if (!elts || elts.length === 0) {
     return;
   }
+
   // Recursive function to search through DOM elements
   function recursiveSearch(element) {
 
     // Check if the element is a div and has the target classes
     if (
-      element.tagName === 'DIV' &&
-      element.classList.contains('rbc-event') &&
-      element.classList.contains('schedule-calendar-session') &&
-      !element.classList.contains('reinvent-fixer') // so we don't do this twice as we click around
+      element.tagName === 'DIV' && element.classList.contains('schedule-calendar-session')
     ) {
       let titleAndTime = element.title;
-      const titleParts = titleAndTime.match(/(?:\d{1,2}:\d{2} [AP]M(?: - \d{1,2}:\d{2} [AP]M)? \w*?: )(.*)/);
+      const titleParts = titleAndTime.match(/(\d{1,2}:\d{2} [AP]M(?: - \d{1,2}:\d{2} [AP]M)?(?: \w*)?):?\s*(.*)/);
+
+      if (debug) console.log(titleParts);
 
       if (titleParts && titleParts[1]) {
-        const title  = titleParts[1].trim();
-        let item = sessionInterests.find((session) => session.title.trim() === title);
-        if (item?.times && item?.times[0]) {
-          let room = item.times[0].room;
+        const time = titleParts[1];
+        const title = titleParts[2];
+        let item = mySchedule.find((session) => session.title.trim() === title.trim());
+        if (!item) item =
+          sessionInterests.find((session) => {
+            if (debug) console.log('session.times', session.times);
+            if (session.times) {
+              let postedTime = session.times[0].startEndTimeSort
+                .replace(/\b0(\d{1}:\d{2} [AP]M)\b/g, '$1') // Remove leading zeros
+                .replace(/([AP]M) ([\d{1}])/g, '$1 - $2') + ' PST'; // Add hyphen and time zone
+              if (debug) console.log(time, title, postedTime)
+
+              return session.title.trim() === title.trim() && time === postedTime;
+            } else {
+              console.warn('problem item', session);
+              return false;
+            }
+          });
+
+        if (debug) console.log(item);
+        if (!item) {
+          console.warn('No session found for', title, 'faking it');
+          item = { room: 'Unknown' };
+        }
+
+        if (debug) console.log(item);
+        let room;
+        if (item.room || item.room_name) {
+          room = item.room || item.room_name;
+        } else if ((item?.times && item?.times[0])) {
+          room = item.times[0].room;
+        }
+
+        if (room) {
           let venueParts = room.split(' ');
           let venue = venueParts[0];
-          element.classList.add(venue.toString().toLowerCase());
+          element.classList.forEach(className => {
+            if (className.startsWith('venue-')) {
+              element.classList.remove(className);
+            }
+          });
+          element.classList.add('venue-' + venue.toString().toLowerCase());
           element.classList.add('reinvent-fixer');
 
           // Attach the venue name
           let contentDiv = element.querySelector('.rbc-event-content');
           if (contentDiv) {
+            let existingVenueParagraph = contentDiv.querySelector('p.venue');
+            if (existingVenueParagraph) {
+              contentDiv.removeChild(existingVenueParagraph);
+            }
             let venueParagraph = document.createElement('p');
+            venueParagraph.classList.add('venue');
             venueParagraph.textContent = venue;
 
             // Append the new p element inside the contentDiv
@@ -101,14 +150,13 @@ function addSessionVenues () {
             console.warn('rbc-event-content div not found for', title);
           }
 
-        } else {
-          console.warn('No venue found for', title);
         }
+
       }
 
     }
 
-    // Recursively search through the child elements
+    // // Recursively search through the child elements
     for (let i = 0; i < element.children.length; i++) {
       recursiveSearch(element.children[i]);
     }
@@ -135,7 +183,7 @@ function hookShowFavoritesCheckbox() {
         checkbox.addEventListener('click', function () {
           setTimeout(() => {
             addSessionVenues();
-          }, 500); // delay so the page has time to update
+          }, 25); // delay so the page has time to update
         });
       }
 
@@ -153,7 +201,7 @@ function hookShowFavoritesCheckbox() {
         // Run the addSessionVenues function when the button is clicked
         setTimeout(() => {
           addSessionVenues();
-        }, 500); // delay so the page has time to update
+        }, 25); // delay so the page has time to update
       });
     }
   });
@@ -165,18 +213,17 @@ function hookShowFavoritesCheckbox() {
       // Run the addSessionVenues function when the button is clicked
       setTimeout(() => {
         addSessionVenues();
-      }, 500); // delay so the page has time to update
+      }, 25); // delay so the page has time to update
     }
   });
 }
 
 
-
-(function() {
+(function () {
   const originalFetch = window.fetch;
 
   // Override the native fetch function
-  window.fetch = async function(...args) {
+  window.fetch = async function (...args) {
     const response = await originalFetch(...args);
 
     if (args[0] && args[0].includes) {
@@ -185,6 +232,9 @@ function hookShowFavoritesCheckbox() {
         clone.json().then(data => {
           if (data?.sessionInterests) {
             sessionInterests = data.sessionInterests;
+            if (data?.mySchedule) {
+              mySchedule = data.mySchedule;
+            }
             addSessionVenues()
           }
         });
@@ -198,10 +248,11 @@ function hookShowFavoritesCheckbox() {
 
 // Only modify our registration agenda page
 setTimeout(() => {
-  if ( window.location.href.startsWith('https://registration.awsevents.com/') && window.location.href.includes('/myagenda/page/myagenda')) {
+  if (window.location.href.startsWith('https://registration.awsevents.com/') && window.location.href.includes('/myagenda/page/myagenda')) {
     if (document.getElementById('aws-tweaker-panel')) {
       return
     }
+    if (debug) console.log('starting');
     hookShowFavoritesCheckbox()
     insertTools()
     insertStylesheet()
@@ -209,5 +260,6 @@ setTimeout(() => {
   } else {
     removeTools()
   }
+  setInterval(addSessionVenues, 15000); // periodically refresh
 }, 3000) // delay so the page has time to update
 
